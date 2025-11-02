@@ -170,7 +170,7 @@ export default function LuvraLanding() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <div className="text-2xl font-bold text-primary"><img src="" alt="logo"/> </div>
+            <div className="text-2xl font-bold text-primary"><img src="/images/logo.png" alt="logo" className="w-32 md:w-24 h-auto"/> </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
