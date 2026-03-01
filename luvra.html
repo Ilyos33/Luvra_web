@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LUVRA - Suyuq sovun oilalar uchun. Tabiiy, xavfsiz va samarali.">
+    <title>LUVRA - Tozalik sog'liqning asosi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1A1A1A;
+            background-color: #FFFFFF;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #f0f0f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-img {
+            height: 48px;
+            width: auto;
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #C89B3C;
+        }
+
+        .lang-toggle {
+            padding: 0.5rem 1.25rem;
+            border: 2px solid #C89B3C;
+            background: white;
+            color: #C89B3C;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-toggle:hover {
+            background: #C89B3C;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #F9F6F1 0%, #FFFFFF 50%, #FFF8E7 100%);
+            overflow: hidden;
+        }
+
+        .hero::before,
+        .hero::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: #C89B3C;
+            opacity: 0.1;
+            filter: blur(80px);
+        }
+
+        .hero::before {
+            top: 40px;
+            left: 40px;
+            width: 300px;
+            height: 300px;
+        }
+
+        .hero::after {
+            bottom: 40px;
+            right: 40px;
+            width: 400px;
+            height: 400px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #C89B3C;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: #B8893C;
+            transform: scale(1.05);
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-image img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section-bg {
+            background: #F9F6F1;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: #666;
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: #F9F6F1;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px);
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            background: rgba(200, 155, 60, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: #C89B3C;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px);
+        }
+
+        .product-image {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .product-blue {
+            background: #AED6F1;
+        }
+
+        .product-pink {
+            background: #F9C6CE;
+        }
+
+        .product-info {
+            background: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .product-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .product-info p {
+            color: #666;
+        }
+
+        /* Classic Products */
+        .product-classic {
+            border: 2px solid #C89B3C;
+        }
+
+        .product-image-classic {
+            background: linear-gradient(135deg, #f9fafb 0%, #FFFFFF 100%);
+        }
+
+        .product-info-dark {
+            background: #1A1A1A;
+            color: white;
+        }
+
+        .product-info-dark h3 {
+            color: #C89B3C;
+        }
+
+        .product-info-dark p {
+            color: #ccc;
+        }
+
+        .product-info-light {
+            background: white;
+            border-top: 2px solid #C89B3C;
+        }
+
+        .product-info-light h3 {
+            color: #C89B3C;
+        }
+
+        /* Contact Section */
+        .contact-box {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .phone-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .phone-button:hover {
+            background: #20BA5A;
+            transform: scale(1.02);
+        }
+
+        .phone-button:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1A1A1A;
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .footer-logo img {
+            height: 40px;
+        }
+
+        .footer-logo span {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #C89B3C;
+        }
+
+        .footer-copyright {
+            color: #999;
+            text-align: center;
+        }
+
+        .footer-social {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-social span {
+            color: #999;
+        }
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: #C89B3C;
+            transform: translateY(-3px);
+        }
+
+        .social-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .contact-box {
+                padding: 2rem 1.5rem;
+            }
+
+            .phone-button {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding: 3rem 0;
+            }
+
+            .section {
+                padding: 3rem 0;
+            }
+
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+
+            .hero-text p {
+                font-size: 1rem;
+            }
+
+            .brand-name {
+                font-size: 1.25rem;
+            }
+
+            .logo-img {
+                height: 40px;
+            }
+        }
+
+        /* Hidden class for language toggle */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="https://customer-assets.emergentagent.com/job_650e5141-477b-4939-a745-c4f735d36886/artifacts/iogifv58_Liquid%20Soap%20500.png" alt="LUVRA Logo" class="logo-img">
+                    <span class="brand-name">LUVRA</span>
+                </div>
+                <button class="lang-toggle" onclick="toggleLanguage()">
+                    <span data-uz="O'zbek | Русский" data-ru="Русский | O'zbek">O'zbek | Русский</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 data-uz="Tozalik — sog'liqning asosi" data-ru="Чистота — основа здоровья">Tozalik — sog'liqning asosi</h1>
+                    <p data-uz="LUVRA suyuq sovuni — yumshoq, xavfsiz va samarali" data-ru="Жидкое мыло LUVRA — мягкое, безопасное и эффективное">LUVRA suyuq sovuni — yumshoq, xavfsiz va samarali</p>
+                    <a href="#products" class="cta-button" data-uz="Mahsulotlar bilan tanishing" data-ru="Ознакомьтесь с продуктами">Mahsulotlar bilan tanishing</a>
+                </div>
+                <div class="hero-image">
+                    <img src="https://customer-assets.emergentagent.com/job_650e5141-477b-4939-a745-c4f735d36886/artifacts/xlwsvsta_IMG_2418.jpg" alt="LUVRA Premium Liquid Soap">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why LUVRA Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title" data-uz="Nima uchun LUVRA?" data-ru="Почему LUVRA?">Nima uchun LUVRA?</h2>
+
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                        </svg>
+                    </div>
+                    <h3 data-uz="Tabiiy tarkib" data-ru="Натуральный состав">Tabiiy tarkib</h3>
+                    <p data-uz="Teri uchun yumshoq va tabiiy ingredientlar" data-ru="Мягкие ингредиенты для кожи">Teri uchun yumshoq va tabiiy ingredientlar</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                        </svg>
+                    </div>
+                    <h3 data-uz="Oila uchun xavfsiz" data-ru="Безопасно для всей семьи">Oila uchun xavfsiz</h3>
+                    <p data-uz="Bolalar va kattalar uchun mos" data-ru="Подходит для детей и взрослых">Bolalar va kattalar uchun mos</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.864 4.243A7.5 7.5 0 0119.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 004.5 10.5a7.464 7.464 0 01-1.15 3.993m1.989 3.559A11.209 11.209 0 008.25 10.5a3.75 3.75 0 117.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 01-3.6 9.75m6.633-4.596a18.666 18.666 0 01-2.485 5.33" />
+                        </svg>
+                    </div>
+                    <h3 data-uz="Kuchli tozalash" data-ru="Эффективное очищение">Kuchli tozalash</h3>
+                    <p data-uz="Chuqur tozalash teringizni quritmasdan" data-ru="Глубокое очищение без пересыхания">Chuqur tozalash teringizni quritmasdan</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                    </div>
+                    <h3 data-uz="Arzon narx" data-ru="Доступная цена">Arzon narx</h3>
+                    <p data-uz="Sifatli mahsulot qulay narxda" data-ru="Высокое качество по разумной цене">Sifatli mahsulot qulay narxda</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kids Products Section -->
+    <section id="products" class="section section-bg">
+        <div class="container">
+            <h2 class="section-title" data-uz="Bolalar uchun suyuq sovun" data-ru="Жидкое мыло для детей">Bolalar uchun suyuq sovun</h2>
+            <p class="section-subtitle" data-uz="Bolalar terisi uchun maxsus ishlab chiqilgan — yumshoq va ta'sirli" data-ru="Специально разработано для нежной кожи детей — мягко и эффективно">Bolalar terisi uchun maxsus ishlab chiqilgan — yumshoq va ta'sirli</p>
+
+            <div class="products-grid">
+                <!-- Baby Blue -->
+                <div class="product-card">
+                    <div class="product-image product-blue">
+                        <img src="https://customer-assets.emergentagent.com/job_650e5141-477b-4939-a745-c4f735d36886/artifacts/r7h5oame_IMG_2439.jpg" alt="LUVRA Baby Blue">
+                    </div>
+                    <div class="product-info">
+                        <h3>LUVRA Baby Blue</h3>
+                        <p data-uz="O'g'il bolalar uchun — toza va yangi hid" data-ru="Для мальчиков — свежий и чистый аромат">O'g'il bolalar uchun — toza va yangi hid</p>
+                    </div>
+                </div>
+
+                <!-- Baby Pink -->
+                <div class="product-card">
+                    <div class="product-image product-pink">
+                        <img src="https://customer-assets.emergentagent.com/job_650e5141-477b-4939-a745-c4f735d36886/artifacts/noncjf9v_IMG_2438.jpg" alt="LUVRA Baby Pink">
+                    </div>
+                    <div class="product-info">
+                        <h3>LUVRA Baby Pink</h3>
+                        <p data-uz="Qiz bolalar uchun — muloyim va nafis hid" data-ru="Для девочек — нежный и изысканный аромат">Qiz bolalar uchun — muloyim va nafis hid</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Classic Products Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title" data-uz="Oddiy suyuq sovun" data-ru="Классическое жидкое мыло">Oddiy suyuq sovun</h2>
+            <p class="section-subtitle" data-uz="Kundalik foydalanish uchun — oila a'zolari uchun qulay" data-ru="Для ежедневного использования — удобно для всей семьи">Kundalik foydalanish uchun — oila a'zolari uchun qulay</p>
+
+            <div class="products-grid">
+                <!-- Premium Black -->
+                <div class="product-card product-classic">
+                    <div class="product-image product-image-classic">
+                        <img src="https://customer-assets.emergentagent.com/job_650e5141-477b-4939-a745-c4f735d36886/artifacts/thg64p0o_IMG_2416.jpg" alt="LUVRA Premium">
+                    </div>
+                    <div class="product-info product-info-dark">
+                        <h3>LUVRA Premium</h3>
+                        <p data-uz="Yuqori sifatli kundalik parvarish" data-ru="Высококачественный ежедневный уход">Yuqori sifatli kundalik parvarish</p>
+                    </div>
+                </div>
+
+                <!-- Premium White -->
+                <div class="product-card product-classic">
+                    <div class="product-image product-image-classic">
+                        <img src="https://customer-assets.emergentagent.com/job_650e5141-477b-4939-a745-c4f735d36886/artifacts/xlwsvsta_IMG_2418.jpg" alt="LUVRA Premium">
+                    </div>
+                    <div class="product-info product-info-light">
+                        <h3>LUVRA Premium</h3>
+                        <p data-uz="Yuqori sifatli kundalik parvarish" data-ru="Высококачественный ежедневный уход">Yuqori sifatli kundalik parvarish</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section section-bg">
+        <div class="container">
+            <h2 class="section-title" data-uz="Biz bilan bog'lanish uchun ma'lumotlar" data-ru="Контактная информация">Biz bilan bog'lanish uchun ma'lumotlar</h2>
+            <p class="section-subtitle" data-uz="Mahsulot narxlari, chegirmalar va yetkazib berish shartlari bo'yicha batafsil ma'lumot olish uchun sotuv bo'limimizga murojaat qiling. Mutaxassislarimiz barcha savollaringiz bo'yicha yordam berishga tayyor." data-ru="Для получения подробной информации о ценах, скидках и условиях доставки обращайтесь в наш отдел продаж. Наши специалисты готовы ответить на все ваши вопросы.">Mahsulot narxlari, chegirmalar va yetkazib berish shartlari bo'yicha batafsil ma'lumot olish uchun sotuv bo'limimizga murojaat qiling. Mutaxassislarimiz barcha savollaringiz bo'yicha yordam berishga tayyor.</p>
+
+            <div class="contact-box">
+                <h3 class="contact-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C89B3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    <span data-uz="Bizga qo'ng'iroq qiling:" data-ru="Позвоните нам:">Bizga qo'ng'iroq qiling:</span>
+                </h3>
+
+                <a href="https://wa.me/998970107707" class="phone-button" target="_blank" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    +998 97 010 77 07
+                </a>
+
+                <a href="https://wa.me/998770807707" class="phone-button" target="_blank" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    +998 77 080 77 07
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="https://customer-assets.emergentagent.com/job_650e5141-477b-4939-a745-c4f735d36886/artifacts/iogifv58_Liquid%20Soap%20500.png" alt="LUVRA Logo">
+                    <span>LUVRA</span>
+                </div>
+
+                <div class="footer-copyright">
+                    <p data-uz="© 2024 LUVRA. Barcha huquqlar himoyalangan." data-ru="© 2024 LUVRA. Все права защищены.">© 2024 LUVRA. Barcha huquqlar himoyalangan.</p>
+                </div>
+
+                <div class="footer-social">
+                    <span data-uz="Bizni kuzating:" data-ru="Следите за нами:">Bizni kuzating:</span>
+                    <a href="#" class="social-icon" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon" aria-label="Telegram">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon" aria-label="Facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language Toggle Functionality
+        let currentLang = 'uz';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'uz' ? 'ru' : 'uz';
+
+            // Get all elements with language attributes
+            const elements = document.querySelectorAll('[data-uz][data-ru]');
+
+            elements.forEach(element => {
+                const uzText = element.getAttribute('data-uz');
+                const ruText = element.getAttribute('data-ru');
+
+                if (currentLang === 'uz') {
+                    element.textContent = uzText;
+                } else {
+                    element.textContent = ruText;
+                }
+            });
+
+            // Update HTML lang attribute
+            document.documentElement.lang = currentLang;
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
