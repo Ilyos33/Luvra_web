@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Восстановление пароля - LUVRA Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <a href="/" class="logo-section">
+        <img src="https://customer-assets.emergentagent.com/job_650e5141-477b-4939-a745-c4f735d36886/artifacts/iogifv58_Liquid%20Soap%20500.png" alt="LUVRA Logo" class="logo-img">
+        <span class="brand-name">LUVRA</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1 data-i18n="admin.recover.title">Восстановление пароля</h1>
+    <p class="auth-subtitle" data-i18n="admin.recover.text">Введите секретный код восстановления, логин администратора и новый пароль.</p>
+
+    <div id="formError" class="form-error"></div>
+    <div id="formSuccess" class="form-success"></div>
+
+    <form id="recoverForm">
+      <div class="form-field">
+        <label data-i18n="admin.recover.key">Код восстановления</label>
+        <input type="text" name="recoveryKey" required autofocus>
+      </div>
+      <div class="form-field">
+        <label data-i18n="admin.recover.username">Логин администратора</label>
+        <input type="text" name="username" autocomplete="username" required>
+      </div>
+      <div class="form-field">
+        <label data-i18n="admin.recover.newPassword">Новый пароль</label>
+        <input type="password" name="newPassword" autocomplete="new-password" minlength="8" required>
+      </div>
+      <button type="submit" class="auth-submit" data-i18n="admin.recover.submit">Сбросить пароль</button>
+    </form>
+
+    <div class="auth-links">
+      <a href="/admin" data-i18n="admin.recover.back">Назад ко входу</a>
+    </div>
+  </div>
+</div>
+
+<script src="/js/i18n.js"></script>
+<script src="/js/admin-auth.js"></script>
+</body>
+</html>

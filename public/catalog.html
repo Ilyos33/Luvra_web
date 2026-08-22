@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="LUVRA - Mahsulotlar katalogi">
+<title>Katalog - LUVRA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <a href="/" class="logo-section">
+        <img src="https://customer-assets.emergentagent.com/job_650e5141-477b-4939-a745-c4f735d36886/artifacts/iogifv58_Liquid%20Soap%20500.png" alt="LUVRA Logo" class="logo-img">
+        <span class="brand-name">LUVRA</span>
+      </a>
+      <nav class="main-nav">
+        <a href="/" class="nav-link" data-i18n="nav.home">Главная</a>
+        <a href="/catalog" class="nav-link" data-i18n="nav.catalog">Каталог</a>
+      </nav>
+      <div class="header-actions">
+        <button class="lang-toggle"><span data-i18n="nav.lang">Русский</span></button>
+        <button class="nav-toggle" aria-label="Меню">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Catalog -->
+<section class="section">
+  <div class="container">
+    <h1 class="section-title" data-i18n="catalog.title">Каталог</h1>
+
+    <div id="categoryFilters" class="category-filters"></div>
+
+    <div id="catalogLoading" class="spinner"></div>
+
+    <p id="catalogError" class="hidden" style="text-align:center;color:#C0392B;" data-i18n="catalog.error">
+      Не удалось загрузить товары. Попробуйте обновить страницу.
+    </p>
+
+    <div id="productsGrid" class="products-grid hidden"></div>
+
+    <div id="catalogEmpty" class="empty-state hidden">
+      <div class="empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+        </svg>
+      </div>
+      <h3 data-i18n="catalog.empty.title">Каталог пока пуст</h3>
+      <p data-i18n="catalog.empty.text">Мы готовим для вас ассортимент товаров. Загляните немного позже.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="https://customer-assets.emergentagent.com/job_650e5141-477b-4939-a745-c4f735d36886/artifacts/iogifv58_Liquid%20Soap%20500.png" alt="LUVRA Logo">
+        <span>LUVRA</span>
+      </div>
+      <div class="footer-copyright">
+        <p>© <span id="footerYear"></span> LUVRA. <span data-i18n="footer.rights">Barcha huquqlar himoyalangan.</span></p>
+      </div>
+      <div class="footer-social">
+        <span data-i18n="footer.follow">Bizni kuzating:</span>
+        <a href="#" class="social-icon" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+        </a>
+        <a href="#" class="social-icon" aria-label="Telegram">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </a>
+        <a href="#" class="social-icon" aria-label="Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/i18n.js"></script>
+<script src="/js/catalog.js"></script>
+<script>document.getElementById('footerYear').textContent = new Date().getFullYear();</script>
+</body>
+</html>

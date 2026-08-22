@@ -1,0 +1,312 @@
+/* ===================================================================
+   LUVRA — общий фирменный стиль сайта.
+   Палитра и типографика унаследованы от исходного сайта:
+   золото #C89B3C, тёмный #1A1A1A, кремовые фоны, шрифт Nunito.
+   =================================================================== */
+
+:root {
+  --gold: #C89B3C;
+  --gold-dark: #B8893C;
+  --ink: #1A1A1A;
+  --muted: #666666;
+  --cream: #F9F6F1;
+  --cream-warm: #FFF8E7;
+  --white: #FFFFFF;
+  --border: #f0f0f0;
+  --danger: #C0392B;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  color: var(--ink);
+  background-color: var(--white);
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+
+.container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+
+/* ---------- Header / Nav ---------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  gap: 1.5rem;
+}
+.logo-section { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+.logo-img { height: 48px; width: auto; }
+.brand-name { font-size: 1.5rem; font-weight: 700; color: var(--gold); }
+
+.main-nav { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+.nav-link {
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--ink);
+  transition: all 0.2s ease;
+}
+.nav-link:hover { background: var(--cream); }
+.nav-link.active { color: var(--gold); background: rgba(200, 155, 60, 0.1); }
+
+.header-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+.lang-toggle {
+  padding: 0.5rem 1.25rem;
+  border: 2px solid var(--gold);
+  background: white;
+  color: var(--gold);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+.lang-toggle:hover { background: var(--gold); color: white; transform: translateY(-2px); }
+
+.nav-toggle {
+  display: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+.nav-toggle svg { width: 28px; height: 28px; stroke: var(--ink); }
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  padding: 5rem 0;
+  background: linear-gradient(135deg, var(--cream) 0%, #FFFFFF 50%, var(--cream-warm) 100%);
+  overflow: hidden;
+}
+.hero::before, .hero::after {
+  content: ''; position: absolute; border-radius: 50%;
+  background: var(--gold); opacity: 0.1; filter: blur(80px);
+}
+.hero::before { top: 40px; left: 40px; width: 300px; height: 300px; }
+.hero::after { bottom: 40px; right: 40px; width: 400px; height: 400px; }
+.hero-content {
+  position: relative; z-index: 10; display: grid;
+  grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+}
+.hero-text h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem; }
+.hero-text p { font-size: 1.25rem; color: var(--muted); margin-bottom: 2rem; }
+.cta-button {
+  display: inline-block; padding: 1rem 2rem; background: var(--gold);
+  color: white; text-decoration: none; border-radius: 8px;
+  font-size: 1.125rem; font-weight: 600; transition: all 0.3s ease; border: none; cursor: pointer;
+}
+.cta-button:hover { background: var(--gold-dark); transform: scale(1.05); }
+.hero-image img {
+  width: 100%; max-width: 450px; margin: 0 auto; border-radius: 16px;
+  box-shadow: var(--shadow-lg); transition: transform 0.3s ease;
+}
+.hero-image img:hover { transform: scale(1.05); }
+
+/* ---------- Sections ---------- */
+.section { padding: 5rem 0; }
+.section-bg { background: var(--cream); }
+.section-title { font-size: 3rem; font-weight: 800; text-align: center; margin-bottom: 1rem; }
+.section-subtitle {
+  font-size: 1.125rem; color: var(--muted); text-align: center;
+  max-width: 700px; margin: 0 auto 4rem;
+}
+
+/* ---------- Features grid (Why LUVRA) ---------- */
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+.feature-card {
+  background: var(--cream); padding: 2rem; border-radius: 12px; text-align: center;
+  box-shadow: var(--shadow-sm); transition: all 0.3s ease;
+}
+.feature-card:hover { box-shadow: var(--shadow-md); transform: translateY(-8px); }
+.feature-icon {
+  width: 64px; height: 64px; margin: 0 auto 1.5rem;
+  background: rgba(200, 155, 60, 0.1); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.feature-icon svg { width: 32px; height: 32px; stroke: var(--gold); }
+.feature-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; }
+.feature-card p { color: var(--muted); }
+
+/* ---------- About ---------- */
+.about-text { max-width: 800px; margin: 0 auto; text-align: center; font-size: 1.15rem; color: var(--muted); }
+
+/* ---------- Catalog: category filters ---------- */
+.category-filters {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 3rem;
+}
+.category-pill {
+  padding: 0.6rem 1.4rem; border: 2px solid var(--gold); border-radius: 999px;
+  background: white; color: var(--gold); font-weight: 600; font-size: 0.95rem;
+  cursor: pointer; transition: all 0.2s ease;
+}
+.category-pill:hover { background: rgba(200, 155, 60, 0.1); }
+.category-pill.active { background: var(--gold); color: white; }
+
+/* ---------- Products grid ---------- */
+.products-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;
+}
+.product-card {
+  background: white; border-radius: 16px; overflow: hidden;
+  box-shadow: var(--shadow-md); transition: all 0.3s ease; border: 1px solid var(--border);
+}
+.product-card:hover { box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2); transform: translateY(-8px); }
+.product-image {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; background: var(--cream);
+}
+.product-image img { width: 100%; height: 100%; object-fit: contain; }
+.product-info { padding: 1.5rem; }
+.product-info h3 { font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--ink); }
+.product-info .product-desc { color: var(--muted); font-size: 0.95rem; }
+.product-info .product-desc p { margin-bottom: 0.4rem; }
+
+/* ---------- Empty state (catalog) ---------- */
+.empty-state { text-align: center; padding: 4rem 1rem; }
+.empty-state .empty-icon {
+  width: 88px; height: 88px; margin: 0 auto 1.5rem; border-radius: 50%;
+  background: rgba(200, 155, 60, 0.1); display: flex; align-items: center; justify-content: center;
+}
+.empty-state .empty-icon svg { width: 44px; height: 44px; stroke: var(--gold); }
+.empty-state h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+.empty-state p { color: var(--muted); }
+
+/* ---------- Contact ---------- */
+.contact-box {
+  background: white; border-radius: 16px; padding: 3rem;
+  box-shadow: var(--shadow-md); max-width: 800px; margin: 0 auto;
+}
+.contact-title {
+  font-size: 1.5rem; font-weight: 700; text-align: center; margin-bottom: 2rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+}
+.phone-button {
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+  padding: 1rem 1.5rem; background: #25D366; color: white; text-decoration: none;
+  border-radius: 8px; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+.phone-button:hover { background: #20BA5A; transform: scale(1.02); }
+.phone-button:last-child { margin-bottom: 0; }
+
+/* ---------- Footer ---------- */
+.footer { background: var(--ink); color: white; padding: 3rem 0; }
+.footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
+.footer-logo { display: flex; align-items: center; gap: 0.75rem; }
+.footer-logo img { height: 40px; }
+.footer-logo span { font-size: 1.25rem; font-weight: 700; color: var(--gold); }
+.footer-copyright { color: #999; text-align: center; }
+.footer-social { display: flex; align-items: center; gap: 1rem; }
+.footer-social span { color: #999; }
+.social-icon {
+  display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
+  background: rgba(255, 255, 255, 0.1); border-radius: 50%; transition: all 0.3s ease;
+}
+.social-icon:hover { background: var(--gold); transform: translateY(-3px); }
+.social-icon svg { width: 20px; height: 20px; stroke: white; }
+
+/* ---------- Auth pages (admin login/recover) ---------- */
+.auth-wrap {
+  min-height: calc(100vh - 81px);
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--cream) 0%, #FFFFFF 50%, var(--cream-warm) 100%);
+  padding: 2rem 1rem;
+}
+.auth-card {
+  background: white; border-radius: 16px; box-shadow: var(--shadow-md);
+  padding: 2.5rem; width: 100%; max-width: 420px;
+}
+.auth-card h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center; }
+.auth-card .auth-subtitle { color: var(--muted); text-align: center; margin-bottom: 2rem; font-size: 0.95rem; }
+.form-field { margin-bottom: 1.25rem; }
+.form-field label { display: block; font-weight: 600; margin-bottom: 0.4rem; font-size: 0.95rem; }
+.form-field input, .form-field select, .form-field textarea {
+  width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--border);
+  border-radius: 8px; font-family: inherit; font-size: 1rem; transition: border-color 0.2s ease;
+}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+  outline: none; border-color: var(--gold);
+}
+.auth-submit {
+  width: 100%; padding: 0.9rem; background: var(--gold); color: white; border: none;
+  border-radius: 8px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: background 0.2s ease;
+}
+.auth-submit:hover { background: var(--gold-dark); }
+.auth-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.auth-links { text-align: center; margin-top: 1.25rem; font-size: 0.95rem; }
+.auth-links a { color: var(--gold); font-weight: 600; text-decoration: none; }
+.auth-links a:hover { text-decoration: underline; }
+.form-error {
+  background: #FDEDEC; color: var(--danger); padding: 0.75rem 1rem; border-radius: 8px;
+  font-size: 0.9rem; margin-bottom: 1.25rem; display: none;
+}
+.form-error.visible { display: block; }
+.form-success {
+  background: #EAFAF1; color: #1E8449; padding: 0.75rem 1rem; border-radius: 8px;
+  font-size: 0.9rem; margin-bottom: 1.25rem; display: none;
+}
+.form-success.visible { display: block; }
+
+/* Loading spinner used in catalog / admin lists */
+.spinner {
+  width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--gold);
+  border-radius: 50%; margin: 3rem auto; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.hidden { display: none !important; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .main-nav {
+    position: fixed; top: 81px; left: 0; right: 0; background: white;
+    flex-direction: column; align-items: stretch; padding: 1rem; gap: 0.25rem;
+    box-shadow: var(--shadow-sm); border-bottom: 1px solid var(--border);
+    transform: translateY(-150%); transition: transform 0.25s ease; z-index: 999;
+  }
+  .main-nav.open { transform: translateY(0); }
+  .nav-link { text-align: center; }
+  .nav-toggle { display: block; }
+}
+
+@media (max-width: 768px) {
+  .hero-content { grid-template-columns: 1fr; }
+  .hero-text h1 { font-size: 2.5rem; }
+  .section-title { font-size: 2rem; }
+  .features-grid, .products-grid { grid-template-columns: 1fr; }
+  .footer-content { flex-direction: column; text-align: center; }
+  .contact-box { padding: 2rem 1.5rem; }
+  .phone-button { font-size: 1rem; }
+}
+
+@media (max-width: 600px) {
+  .hero { padding: 3rem 0; }
+  .section { padding: 3rem 0; }
+  .hero-text h1 { font-size: 2rem; }
+  .hero-text p { font-size: 1rem; }
+  .brand-name { font-size: 1.25rem; }
+  .logo-img { height: 40px; }
+  .auth-card { padding: 1.75rem; }
+}
