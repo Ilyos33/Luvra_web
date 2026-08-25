@@ -1,4 +1,3 @@
-// db/database.js
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
@@ -7,7 +6,7 @@ const { Pool } = require('pg');
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  console.error('КРИТИЧЕСКАЯ ОШИБКА: Переменная DATABASE_URL не найдена в .env!');
+  console.error('КРИТИЧЕСКАЯ ОШИБКА: Переменная DATABASE_URL не найдена!');
 }
 
 const pool = new Pool({
@@ -17,8 +16,12 @@ const pool = new Pool({
   }
 });
 
-// Автоматическое создание таблиц при запуске
+// Флаг, чтобы структура базы проверялась только один раз за сессию
+let isDbInitialized = false;
+
 async function initDb() {
+  if (isDbInitialized) return;
+  
   try {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS admin_users (
@@ -56,25 +59,19 @@ async function initDb() {
       CREATE INDEX IF NOT EXISTS idx_products_active ON products(is_active);
     `);
 
-    console.log('Таблицы PostgreSQL в Supabase успешно проверены/созданы.');
-
     const { ensureDefaultAdmin } = require('./adminBootstrap');
     if (typeof ensureDefaultAdmin === 'function') {
       await ensureDefaultAdmin({ db: pool, env: process.env });
     }
+
+    isDbInitialized = true;
+    console.log('Таблицы PostgreSQL в Supabase успешно проверены/созданы.');
   } catch (err) {
     console.error('Ошибка инициализации PostgreSQL:', err);
   }
 }
 
+// Вызываем инициализацию, не блокируя поток
 initDb();
 
 module.exports = pool;
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
