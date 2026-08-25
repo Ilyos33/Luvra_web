@@ -8,6 +8,15 @@ const express = require('express');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 
+// Диагностический лог: какой DB-модуль загружен в рантайме
+try {
+  const db = require('./db/database');
+  console.log('RUNTIME DIAGNOSTIC: DATABASE_URL present=', !!process.env.DATABASE_URL);
+  console.log('RUNTIME DIAGNOSTIC: db.connect=', typeof db.connect === 'function', 'db.query=', typeof db.query === 'function');
+} catch (e) {
+  console.error('RUNTIME DIAGNOSTIC: ошибка при require db/database:', e && e.message);
+}
+
 const publicRoutes = require('./routes/public');
 const adminRoutes = require('./routes/admin');
 const { checkOrigin } = require('./middleware/security');
