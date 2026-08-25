@@ -1,7 +1,4 @@
 // routes/admin.js
-// Все эндпоинты админ-панели. GET-эндпоинты для чтения списков + защищённые
-// POST/PUT/DELETE для управления категориями и товарами.
-
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
@@ -18,7 +15,7 @@ const { loginLimiter, recoverLimiter } = require('../middleware/security');
 const router = express.Router();
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
 
-// ---------- вспомогательные функции ----------
+// ---------- Вспомогательные функции ----------
 
 const CYRILLIC_MAP = {
   а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z',
@@ -41,21 +38,20 @@ function slugify(text) {
   return slug || crypto.randomBytes(4).toString('hex');
 }
 
-function uniqueSlug(baseSlug, excludeId) {
+async function uniqueSlug(baseSlug, excludeId) {
   let slug = baseSlug;
   let i = 1;
   while (true) {
-    const row = excludeId
-      ? db.prepare('SELECT id FROM categories WHERE slug = ? AND id != ?').get(slug, excludeId)
-      : db.prepare('SELECT id FROM categories WHERE slug = ?').get(slug);
-    if (!row) return slug;
+    const res = excludeId
+      ? await db.query('SELECT id FROM categories WHERE slug = $1 AND id != $2', [slug, excludeId])
+      : await db.query('SELECT id FROM categories WHERE slug = $1', [slug]);
+
+    if (res.rows.length === 0) return slug;
     i += 1;
     slug = `${baseSlug}-${i}`;
   }
 }
 
-// Разрешаем только безопасный набор HTML-тегов в описании (WYSIWYG-редактор
-// на фронтенде может добавить теги форматирования) — защита от XSS.
 function cleanDescription(html) {
   return sanitizeHtml(html || '', {
     allowedTags: ['p', 'b', 'strong', 'i', 'em', 'u', 'ul', 'ol', 'li', 'br', 'span', 'h3', 'h4', 'a'],
@@ -73,7 +69,7 @@ function handleValidation(req, res, next) {
   return next();
 }
 
-// ---------- загрузка изображений ----------
+// ---------- Загрузка изображений ----------
 
 const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 const ALLOWED_EXT = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
@@ -100,9 +96,9 @@ const upload = multer({
 
 function deleteImageFiles(filenames) {
   filenames.forEach((name) => {
-    const safeName = path.basename(name); // не даём выйти за пределы папки uploads
+    const safeName = path.basename(name);
     const filePath = path.join(UPLOAD_DIR, safeName);
-    fs.unlink(filePath, () => {}); // тихо игнорируем, если файла уже нет
+    fs.unlink(filePath, () => {});
   });
 }
 
@@ -115,28 +111,34 @@ router.post(
   loginLimiter,
   [body('username').trim().notEmpty(), body('password').notEmpty()],
   handleValidation,
-  async (req, res) => {
-    const { username, password } = req.body;
+  async (req, res, next) => {
+    try {
+      const { username, password } = req.body;
 
-    const admin = db.prepare('SELECT * FROM admin_users WHERE username = ?').get(username);
-    if (!admin) {
-      return res.status(401).json({ error: 'Неверный логин или пароль' });
+      const result = await db.query('SELECT * FROM admin_users WHERE username = $1', [username]);
+      const admin = result.rows[0];
+
+      if (!admin) {
+        return res.status(401).json({ error: 'Неверный логин или пароль' });
+      }
+
+      const ok = await bcrypt.compare(password, admin.password_hash);
+      if (!ok) {
+        return res.status(401).json({ error: 'Неверный логин или пароль' });
+      }
+
+      const token = issueToken(admin);
+      res.cookie(COOKIE_NAME, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 8 * 60 * 60 * 1000,
+      });
+
+      return res.json({ ok: true, username: admin.username });
+    } catch (err) {
+      return next(err);
     }
-
-    const ok = await bcrypt.compare(password, admin.password_hash);
-    if (!ok) {
-      return res.status(401).json({ error: 'Неверный логин или пароль' });
-    }
-
-    const token = issueToken(admin);
-    res.cookie(COOKIE_NAME, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 8 * 60 * 60 * 1000,
-    });
-
-    res.json({ ok: true, username: admin.username });
   }
 );
 
@@ -158,32 +160,40 @@ router.post(
     body('newPassword').isLength({ min: 8 }).withMessage('Пароль должен быть не короче 8 символов'),
   ],
   handleValidation,
-  async (req, res) => {
-    const { recoveryKey, username, newPassword } = req.body;
+  async (req, res, next) => {
+    try {
+      const { recoveryKey, username, newPassword } = req.body;
 
-    const expected = process.env.ADMIN_RECOVERY_KEY || '';
-    const providedBuf = Buffer.from(String(recoveryKey));
-    const expectedBuf = Buffer.from(String(expected));
+      const expected = process.env.ADMIN_RECOVERY_KEY || '';
+      const providedBuf = Buffer.from(String(recoveryKey));
+      const expectedBuf = Buffer.from(String(expected));
 
-    const validKey =
-      expected.length > 0 &&
-      providedBuf.length === expectedBuf.length &&
-      crypto.timingSafeEqual(providedBuf, expectedBuf);
+      const validKey =
+        expected.length > 0 &&
+        providedBuf.length === expectedBuf.length &&
+        crypto.timingSafeEqual(providedBuf, expectedBuf);
 
-    if (!validKey) {
-      return res.status(401).json({ error: 'Неверный код восстановления' });
+      if (!validKey) {
+        return res.status(401).json({ error: 'Неверный код восстановления' });
+      }
+
+      const result = await db.query('SELECT * FROM admin_users WHERE username = $1', [username]);
+      const admin = result.rows[0];
+
+      if (!admin) {
+        return res.status(404).json({ error: 'Администратор с таким логином не найден' });
+      }
+
+      const passwordHash = await bcrypt.hash(newPassword, 12);
+      await db.query(
+        'UPDATE admin_users SET password_hash = $1, updated_at = NOW() WHERE id = $2',
+        [passwordHash, admin.id]
+      );
+
+      return res.json({ ok: true });
+    } catch (err) {
+      return next(err);
     }
-
-    const admin = db.prepare('SELECT * FROM admin_users WHERE username = ?').get(username);
-    if (!admin) {
-      return res.status(404).json({ error: 'Администратор с таким логином не найден' });
-    }
-
-    const passwordHash = await bcrypt.hash(newPassword, 12);
-    db.prepare('UPDATE admin_users SET password_hash = ?, updated_at = datetime(\'now\') WHERE id = ?')
-      .run(passwordHash, admin.id);
-
-    res.json({ ok: true });
   }
 );
 
@@ -191,9 +201,13 @@ router.post(
 // КАТЕГОРИИ
 // =======================================================================
 
-router.get('/categories', requireAdmin, (req, res) => {
-  const rows = db.prepare('SELECT * FROM categories ORDER BY sort_order ASC, name_ru ASC').all();
-  res.json(rows);
+router.get('/categories', requireAdmin, async (req, res, next) => {
+  try {
+    const result = await db.query('SELECT * FROM categories ORDER BY sort_order ASC, name_ru ASC');
+    return res.json(result.rows);
+  } catch (err) {
+    return next(err);
+  }
 });
 
 router.post(
@@ -201,15 +215,20 @@ router.post(
   requireAdmin,
   [body('name_ru').trim().notEmpty(), body('name_uz').trim().notEmpty()],
   handleValidation,
-  (req, res) => {
-    const { name_ru: nameRu, name_uz: nameUz } = req.body;
-    const slug = uniqueSlug(slugify(nameRu));
+  async (req, res, next) => {
+    try {
+      const { name_ru: nameRu, name_uz: nameUz } = req.body;
+      const slug = await uniqueSlug(slugify(nameRu));
 
-    const info = db
-      .prepare('INSERT INTO categories (slug, name_ru, name_uz) VALUES (?, ?, ?)')
-      .run(slug, nameRu, nameUz);
+      const result = await db.query(
+        'INSERT INTO categories (slug, name_ru, name_uz) VALUES ($1, $2, $3) RETURNING id',
+        [slug, nameRu, nameUz]
+      );
 
-    res.status(201).json({ id: info.lastInsertRowid, slug, name_ru: nameRu, name_uz: nameUz });
+      return res.status(201).json({ id: result.rows[0].id, slug, name_ru: nameRu, name_uz: nameUz });
+    } catch (err) {
+      return next(err);
+    }
   }
 );
 
@@ -218,75 +237,88 @@ router.put(
   requireAdmin,
   [param('id').isInt(), body('name_ru').trim().notEmpty(), body('name_uz').trim().notEmpty()],
   handleValidation,
-  (req, res) => {
-    const existing = db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id);
-    if (!existing) return res.status(404).json({ error: 'Категория не найдена' });
+  async (req, res, next) => {
+    try {
+      const existing = await db.query('SELECT * FROM categories WHERE id = $1', [req.params.id]);
+      if (existing.rows.length === 0) return res.status(404).json({ error: 'Категория не найдена' });
 
-    const { name_ru: nameRu, name_uz: nameUz } = req.body;
-    db.prepare('UPDATE categories SET name_ru = ?, name_uz = ? WHERE id = ?').run(
-      nameRu,
-      nameUz,
-      req.params.id
-    );
+      const { name_ru: nameRu, name_uz: nameUz } = req.body;
+      await db.query(
+        'UPDATE categories SET name_ru = $1, name_uz = $2 WHERE id = $3',
+        [nameRu, nameUz, req.params.id]
+      );
 
-    res.json({ ok: true });
+      return res.json({ ok: true });
+    } catch (err) {
+      return next(err);
+    }
   }
 );
 
-router.delete('/categories/:id', requireAdmin, [param('id').isInt()], handleValidation, (req, res) => {
-  const existing = db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id);
-  if (!existing) return res.status(404).json({ error: 'Категория не найдена' });
+router.delete('/categories/:id', requireAdmin, [param('id').isInt()], handleValidation, async (req, res, next) => {
+  try {
+    const existing = await db.query('SELECT * FROM categories WHERE id = $1', [req.params.id]);
+    if (existing.rows.length === 0) return res.status(404).json({ error: 'Категория не найдена' });
 
-  db.prepare('DELETE FROM categories WHERE id = ?').run(req.params.id);
-  // товары этой категории остаются, но становятся "без категории" (ON DELETE SET NULL)
-  res.json({ ok: true });
+    await db.query('DELETE FROM categories WHERE id = $1', [req.params.id]);
+    return res.json({ ok: true });
+  } catch (err) {
+    return next(err);
+  }
 });
 
 // =======================================================================
 // ТОВАРЫ
 // =======================================================================
 
-router.get('/products', requireAdmin, (req, res) => {
-  const rows = db.prepare('SELECT * FROM products ORDER BY sort_order ASC, created_at DESC').all();
-  res.json(
-    rows.map((r) => ({
-      id: r.id,
-      categoryId: r.category_id,
-      name: { ru: r.name_ru, uz: r.name_uz },
-      description: { ru: r.description_ru, uz: r.description_uz },
-      images: JSON.parse(r.images || '[]'),
-      isActive: !!r.is_active,
-    }))
-  );
+router.get('/products', requireAdmin, async (req, res, next) => {
+  try {
+    const result = await db.query('SELECT * FROM products ORDER BY sort_order ASC, created_at DESC');
+    return res.json(
+      result.rows.map((r) => ({
+        id: r.id,
+        categoryId: r.category_id,
+        name: { ru: r.name_ru, uz: r.name_uz },
+        description: { ru: r.description_ru, uz: r.description_uz },
+        images: JSON.parse(r.images || '[]'),
+        isActive: !!r.is_active,
+      }))
+    );
+  } catch (err) {
+    return next(err);
+  }
 });
 
 router.post(
   '/products',
   requireAdmin,
   upload.array('images', 6),
-  (req, res) => {
-    const nameRu = String(req.body?.name_ru || '').trim();
-    const nameUz = String(req.body?.name_uz || '').trim();
+  async (req, res, next) => {
+    try {
+      const nameRu = String(req.body?.name_ru || '').trim();
+      const nameUz = String(req.body?.name_uz || '').trim();
 
-    if (!nameRu || !nameUz) {
-      return res.status(400).json({ error: 'Укажи название товара на русском и узбекском' });
-    }
+      if (!nameRu || !nameUz) {
+        return res.status(400).json({ error: 'Укажи название товара на русском и узбекском' });
+      }
 
-    const categoryId = req.body?.category_id ? Number(req.body.category_id) : null;
-    const isActive = req.body?.is_active === 'false' ? 0 : 1;
+      const categoryId = req.body?.category_id ? Number(req.body.category_id) : null;
+      const isActive = req.body?.is_active === 'false' ? 0 : 1;
 
-    const descriptionRu = cleanDescription(req.body?.description_ru || '');
-    const descriptionUz = cleanDescription(req.body?.description_uz || '');
-    const images = (req.files || []).map((f) => f.filename);
+      const descriptionRu = cleanDescription(req.body?.description_ru || '');
+      const descriptionUz = cleanDescription(req.body?.description_uz || '');
+      const images = (req.files || []).map((f) => f.filename);
 
-    const info = db
-      .prepare(
+      const result = await db.query(
         `INSERT INTO products (category_id, name_ru, name_uz, description_ru, description_uz, images, is_active, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`
-      )
-      .run(categoryId || null, nameRu, nameUz, descriptionRu, descriptionUz, JSON.stringify(images), isActive);
+         VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) RETURNING id`,
+        [categoryId || null, nameRu, nameUz, descriptionRu, descriptionUz, JSON.stringify(images), isActive]
+      );
 
-    res.status(201).json({ id: info.lastInsertRowid });
+      return res.status(201).json({ id: result.rows[0].id });
+    } catch (err) {
+      return next(err);
+    }
   }
 );
 
@@ -294,56 +326,64 @@ router.put(
   '/products/:id',
   requireAdmin,
   upload.array('images', 6),
-  (req, res) => {
-    const existing = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
-    if (!existing) return res.status(404).json({ error: 'Товар не найден' });
-
-    const nameRu = String(req.body?.name_ru || '').trim();
-    const nameUz = String(req.body?.name_uz || '').trim();
-
-    if (!nameRu || !nameUz) {
-      return res.status(400).json({ error: 'Укажи название товара на русском и узбекском' });
-    }
-
-    const categoryId = req.body?.category_id ? Number(req.body.category_id) : null;
-    const isActive = req.body?.is_active === 'false' ? 0 : 1;
-    const descriptionRu = cleanDescription(req.body?.description_ru || '');
-    const descriptionUz = cleanDescription(req.body?.description_uz || '');
-
-    let keptImages = [];
+  async (req, res, next) => {
     try {
-      keptImages = JSON.parse(req.body?.existing_images || '[]');
-    } catch {
-      keptImages = [];
+      const existing = await db.query('SELECT * FROM products WHERE id = $1', [req.params.id]);
+      if (existing.rows.length === 0) return res.status(404).json({ error: 'Товар не найден' });
+
+      const nameRu = String(req.body?.name_ru || '').trim();
+      const nameUz = String(req.body?.name_uz || '').trim();
+
+      if (!nameRu || !nameUz) {
+        return res.status(400).json({ error: 'Укажи название товара на русском и узбекском' });
+      }
+
+      const categoryId = req.body?.category_id ? Number(req.body.category_id) : null;
+      const isActive = req.body?.is_active === 'false' ? 0 : 1;
+      const descriptionRu = cleanDescription(req.body?.description_ru || '');
+      const descriptionUz = cleanDescription(req.body?.description_uz || '');
+
+      let keptImages = [];
+      try {
+        keptImages = JSON.parse(req.body?.existing_images || '[]');
+      } catch {
+        keptImages = [];
+      }
+
+      const oldImages = JSON.parse(existing.rows[0].images || '[]');
+      const removedImages = oldImages.filter((name) => !keptImages.includes(name));
+      deleteImageFiles(removedImages);
+
+      const newImages = (req.files || []).map((f) => f.filename);
+      const finalImages = [...keptImages, ...newImages];
+
+      await db.query(
+        `UPDATE products SET category_id = $1, name_ru = $2, name_uz = $3, description_ru = $4, description_uz = $5,
+         images = $6, is_active = $7, updated_at = NOW() WHERE id = $8`,
+        [categoryId || null, nameRu, nameUz, descriptionRu, descriptionUz, JSON.stringify(finalImages), isActive, req.params.id]
+      );
+
+      return res.json({ ok: true });
+    } catch (err) {
+      return next(err);
     }
-
-    const oldImages = JSON.parse(existing.images || '[]');
-    const removedImages = oldImages.filter((name) => !keptImages.includes(name));
-    deleteImageFiles(removedImages);
-
-    const newImages = (req.files || []).map((f) => f.filename);
-    const finalImages = [...keptImages, ...newImages];
-
-    db.prepare(
-      `UPDATE products SET category_id = ?, name_ru = ?, name_uz = ?, description_ru = ?, description_uz = ?,
-       images = ?, is_active = ?, updated_at = datetime('now') WHERE id = ?`
-    ).run(categoryId || null, nameRu, nameUz, descriptionRu, descriptionUz, JSON.stringify(finalImages), isActive, req.params.id);
-
-    res.json({ ok: true });
   }
 );
 
-router.delete('/products/:id', requireAdmin, [param('id').isInt()], handleValidation, (req, res) => {
-  const existing = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
-  if (!existing) return res.status(404).json({ error: 'Товар не найден' });
+router.delete('/products/:id', requireAdmin, [param('id').isInt()], handleValidation, async (req, res, next) => {
+  try {
+    const existing = await db.query('SELECT * FROM products WHERE id = $1', [req.params.id]);
+    if (existing.rows.length === 0) return res.status(404).json({ error: 'Товар не найден' });
 
-  deleteImageFiles(JSON.parse(existing.images || '[]'));
-  db.prepare('DELETE FROM products WHERE id = ?').run(req.params.id);
+    deleteImageFiles(JSON.parse(existing.rows[0].images || '[]'));
+    await db.query('DELETE FROM products WHERE id = $1', [req.params.id]);
 
-  res.json({ ok: true });
+    return res.json({ ok: true });
+  } catch (err) {
+    return next(err);
+  }
 });
 
-// Обработчик ошибок multer (например, файл слишком большой или неверный формат)
 router.use((err, req, res, next) => {
   if (err instanceof multer.MulterError || err.message.includes('Разрешены только')) {
     return res.status(400).json({ error: err.message });

@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const db = require('./database');
 
-function ensureDefaultAdmin(options = {}) {
+async function ensureDefaultAdmin(options = {}) {
   const targetDb = options.db || db;
   const env = options.env || process.env;
   const bcryptImpl = options.bcrypt || bcrypt;
@@ -19,19 +19,33 @@ function ensureDefaultAdmin(options = {}) {
     return false;
   }
 
-  const existing = targetDb.prepare('SELECT id, username FROM admin_users WHERE username = ?').get(username);
+  try {
+    const existing = await targetDb.query(
+      'SELECT id, username FROM admin_users WHERE username = $1',
+      [username]
+    );
 
-  if (existing) {
-    const passwordHash = bcryptImpl.hashSync(password, 12);
-    targetDb.prepare('UPDATE admin_users SET password_hash = ?, updated_at = datetime(\'now\') WHERE username = ?').run(passwordHash, username);
-    console.log(`Администратор "${username}" обновлён из переменных окружения.`);
+    const passwordHash = await bcryptImpl.hash(password, 12);
+
+    if (existing.rows.length > 0) {
+      await targetDb.query(
+        'UPDATE admin_users SET password_hash = $1, updated_at = NOW() WHERE username = $2',
+        [passwordHash, username]
+      );
+      console.log(`Администратор "${username}" обновлён из переменных окружения.`);
+      return true;
+    }
+
+    await targetDb.query(
+      'INSERT INTO admin_users (username, password_hash) VALUES ($1, $2)',
+      [username, passwordHash]
+    );
+    console.log(`Администратор "${username}" создан автоматически из переменных окружения.`);
     return true;
+  } catch (err) {
+    console.error('Ошибка инициализации администратора:', err);
+    return false;
   }
-
-  const passwordHash = bcryptImpl.hashSync(password, 12);
-  targetDb.prepare('INSERT INTO admin_users (username, password_hash) VALUES (?, ?)').run(username, passwordHash);
-  console.log(`Администратор "${username}" создан автоматически из переменных окружения.`);
-  return true;
 }
 
 module.exports = { ensureDefaultAdmin };
