@@ -303,7 +303,7 @@ router.post(
       }
 
       const categoryId = req.body?.category_id ? Number(req.body.category_id) : null;
-      const isActive = req.body?.is_active === 'false' ? 0 : 1;
+      const isActive = req.body?.is_active === 'false' ? false : true;
 
       const descriptionRu = cleanDescription(req.body?.description_ru || '');
       const descriptionUz = cleanDescription(req.body?.description_uz || '');
@@ -339,7 +339,7 @@ router.put(
       }
 
       const categoryId = req.body?.category_id ? Number(req.body.category_id) : null;
-      const isActive = req.body?.is_active === 'false' ? 0 : 1;
+      const isActive = req.body?.is_active === 'false' ? false : true;
       const descriptionRu = cleanDescription(req.body?.description_ru || '');
       const descriptionUz = cleanDescription(req.body?.description_uz || '');
 

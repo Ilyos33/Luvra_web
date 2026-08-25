@@ -48,7 +48,7 @@ async function initDb() {
         description_ru TEXT NOT NULL DEFAULT '',
         description_uz TEXT NOT NULL DEFAULT '',
         images TEXT NOT NULL DEFAULT '[]',
-        is_active INTEGER NOT NULL DEFAULT 1,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
         sort_order INTEGER NOT NULL DEFAULT 0,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -56,6 +56,18 @@ async function initDb() {
 
       CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
       CREATE INDEX IF NOT EXISTS idx_products_active ON products(is_active);
+
+      -- Если таблица уже существовала и колонка is_active была целочисленной
+      -- (например, при миграции со SQLite), попытаться безопасно привести её к boolean.
+      DO $$
+      BEGIN
+        IF EXISTS(
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'products' AND column_name = 'is_active' AND data_type <> 'boolean'
+        ) THEN
+          ALTER TABLE products ALTER COLUMN is_active TYPE boolean USING (is_active = 1);
+        END IF;
+      END$$;
     `);
 
     const { ensureDefaultAdmin } = require('./adminBootstrap');

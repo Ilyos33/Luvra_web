@@ -52,14 +52,14 @@ router.get('/products', async (req, res, next) => {
       result = await db.query(
         `SELECT p.* FROM products p
          JOIN categories c ON c.id = p.category_id
-         WHERE (p.is_active = TRUE OR p.is_active = 1) AND c.slug = $1
+         WHERE p.is_active = TRUE AND c.slug = $1
          ORDER BY p.sort_order ASC, p.created_at DESC`,
         [category]
       );
     } else {
       result = await db.query(
         `SELECT * FROM products 
-         WHERE is_active = TRUE OR is_active = 1 
+         WHERE is_active = TRUE
          ORDER BY sort_order ASC, created_at DESC`
       );
     }
@@ -74,7 +74,7 @@ router.get('/products', async (req, res, next) => {
 router.get('/products/:id', async (req, res, next) => {
   try {
     const result = await db.query(
-      'SELECT * FROM products WHERE id = $1 AND (is_active = TRUE OR is_active = 1)',
+      'SELECT * FROM products WHERE id = $1 AND is_active = TRUE',
       [req.params.id]
     );
 
