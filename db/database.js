@@ -16,7 +16,6 @@ const pool = new Pool({
   }
 });
 
-// Флаг, чтобы структура базы проверялась только один раз за сессию
 let isDbInitialized = false;
 
 async function initDb() {
@@ -71,7 +70,6 @@ async function initDb() {
   }
 }
 
-// Вызываем инициализацию, не блокируя поток
 initDb();
 
 module.exports = pool;
